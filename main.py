@@ -10,4 +10,3 @@ print("hello")
 #TO DO: Debbug and run the algorithm
 #TO DO: Display results -> classe résultats
 
-Appliance()
