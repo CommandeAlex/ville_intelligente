@@ -45,7 +45,7 @@ microgrid = Microgrid()
 # Households :
 list_households = []
 for k in range(K):
-    # list_households.append(Household())
+    list_households.append(Household())
     pass
 
 """Algorithm ECO-TRADE"""
@@ -54,8 +54,9 @@ for k in range(K):
 def module1():
     # Input : use households and appliances ans stockages
     # Output : CkTrade and DS
+    ctot = 1
 
-    return 0
+    return ctot
 
 # Module 2
 def module2():
@@ -69,24 +70,26 @@ def module3():
     # Input : use households and appliances ans stockages
     # Output : solution and ME
 
-    return 0
+    return 1, []
 
 
 # ECO-TRADE Algorithm
 
 epsilon_count, epsilon_max, Cpre = 0, 0, 0
-Ccur, epsilon_cur, epsilon = 0, 0, 0.7
+Ccur, epsilon_cur, epsilon = 1, 0, 0.7
 for household in list_households:
     Cpre += module1()
-
+print("Cost at initialization :", Cpre)
 while epsilon_count <= epsilon_max:
     module2()
-    Ccur = module3()
+    Ccur, x = module3()
+
     epsilon_cur = abs((Cpre - Ccur)/Cpre)
     if epsilon_cur <= epsilon:
         epsilon_count += 1
     else:
         epsilon_count = 0
     Cpre = Ccur
-# final solution :
 
+# final solution :
+print("Solution :", x)

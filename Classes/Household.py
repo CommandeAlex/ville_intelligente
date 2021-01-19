@@ -1,5 +1,5 @@
 class Household:
-    def __init__(self,id,C,C_NT,L_max,list_DS,list_GE,list_MQ,list_RE,list_ME,list_appliance,list_storage,list_renewable):
+    def __init__(self,id=0,C=0,C_NT=0,L_max=0,list_DS=[],list_GE=[],list_MQ=[],list_RE=[],list_ME=[],list_appliance=[],list_storage=[],list_renewable=[]):
         self.id = id
         self.C = C
         self.C_NT = C_NT
