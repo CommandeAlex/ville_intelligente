@@ -6,8 +6,8 @@ class Appliance:
         # Attributs :
         self.disutility = 0.1   # Prefered Delay
         self.p = 0.0    # Power consumption
-        list_r = []     # Reservation time
-        t = 0   # Duration time of an appliance
-        list_US = []  # Start time of uinterruptible appliance (Not use)
-        list_S = []  # Operation Time
-        tau = 0  # end time of appliance
+        self.list_r = []     # Reservation time
+        self.t = 0   # Duration time of an appliance
+        self.list_US = []  # Start time of uinterruptible appliance (Not use)
+        self.list_S = []  # Operation Time
+        self.tau = 0  # end time of appliance
