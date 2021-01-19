@@ -1,3 +1,7 @@
+# import Classes
+from Classes.Appliance import Appliance
+
+
 print("hello")
 #TO DO: Implementer les classes
 #TO DO: Trouver un solveur de symplex et implementer les variables
