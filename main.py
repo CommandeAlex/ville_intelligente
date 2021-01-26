@@ -138,7 +138,7 @@ def module1():
 
 
     # linprog
-    res = linprog(c, A_eq=l.tolist(), b_eq=b.tolist(), A_ub=lin.tolist(), b_ub=bin.tolist() , bounds=bounds, options={"disp": True})
+    res = linprog(c, A_eq=l.tolist(), b_eq=b.tolist(), A_ub=lin.tolist(), b_ub=bin.tolist(), bounds=bounds, options={"disp": True})
     print(res)
     return ctot
 
