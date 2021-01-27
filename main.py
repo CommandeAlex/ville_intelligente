@@ -53,94 +53,101 @@ for k in range(K):
 
 # Module 1
 def module1():
-    # Input : use households and appliances ans stockages
-    # Output : CkTrade and DS
+    """
+     Input : use households and appliances ans stockages
+     Output : CkTrade and DS
+    :return:
+    """
+
+
     ctot = 1
-    # TODO :
-    # Construire les matrices A, b, c et bounds
-    # A = (?,?) de zéros
-    # Ligne par ligne => remplissage (DUR)
-    # x size = 6h+1 -> 169
-    GPh = 1
+
+    GPh = 0.18
     disutility = 0.1
+    t = 3  # appliance.t
+    E = 0.8  # storage.E
+    IE = 3 # storage.IE
+    SD = 0.01 # storage.sd
+    P1 = 1800  # household.p
+    MinC = 2.56 # min storage
+    MaxC = 6.4 # max storage
+    SP = [MaxC-IE - i*0.1 for i in range(24)]  # stockage.sp
+    RQ = [0.1 for _ in range(24)]  # stockage.RQ
+    beta = 17 # appliance.beta
+    Lmax = 6000
+
+
     c = np.zeros(145)
     # x = [GE1 .. GE24, S1 .. S24, IC1 .. IC24, BE1 .. BE24, RE1 .. RE24, SE1 .. SE24, Tau]
     x_index = {"GE": 0, "S": 24, "IC": 48, "BE": 72, "RE": 96, "SE": 120}
-
     # Fonction de cout
     c[:25] = GPh
     c[-1] = disutility
-
     # Matrice de contraintes
     b = np.zeros(50)
-
     # Contrainte 3 : h [1,24] Lh = -> -1 GEh + P1*Sh + SP * ICh - BEh - REh = (0)
     l = np.zeros((50, 145))
-    P1 = 0  # household.p
-    SP = 0  # stockage.sp
     for offset in range(24):
         l[offset, offset + x_index["GE"]] = -1  # -GEh
         l[offset, offset + x_index["S"]] = P1  # P1 * Sh
-        l[offset, offset + x_index["IC"]] = SP  # SP * ICh
+        l[offset, offset + x_index["IC"]] = SP[offset]  # SP * ICh
         l[offset, offset + x_index["BE"]] = -1  # -BEh
         l[offset, offset + x_index["RE"]] = -1  # -REh
         b[offset] = 0
 
     # Contrainte 8 : h [1, 24] -> S1 + .. + S24 = t
-    t = 1 # appliance.t
     l[24, x_index["S"]:x_index["IC"]] = 1
     b[24] = t
 
     # Contrainte 4 :
-    E = 1  # storage.E
-    IE = 1 # storage.IE
-    SD = 0.01 # storage.sd
     l[25, x_index["SE"]] = 1
-    l[25, x_index["IC"]] = - E * SP
+    l[25, x_index["IC"]] = - E * SP[0]
     l[25, x_index["BE"]] = 1
     b[25] = IE * SD
     for offset in range(1, 24):
         l[25 + offset, x_index["SE"] + offset] = 1
         l[25 + offset, x_index["SE"] + offset - 1] = -SD
-        l[25, x_index["IC"] + offset] = - E * SP
+        l[25, x_index["IC"] + offset] = - E * SP[offset]
         l[25, x_index["BE"] + offset] = 1
         b[25 + offset] = IE * SD
 
-    lin = np.zeros((24, 145))
-    bin = np.zeros(24)
+    lin = np.zeros((48, 145))
+    bin = np.zeros(48)
+#TODO Refaire la contrainte 11 & 15
 
     # Contrainte 11
     for offset in range(24):
-        lin[offset, offset] = 1
+        lin[offset, offset + x_index['S']] = offset + 1
         lin[offset, -1] = -1
         bin[offset] = 0
+
+    #Contstrain 15
+    for offset in range(24):
+        lin[offset,offset] = 1
+        bin[offset] = Lmax
+
+
 
      # "bounds"
     bounds = [(None, None) for _ in range(145)]
     # bounds = np.array(bounds)
     # Bounds SE:
-    MinC = 10 # min storage
-    MaxC = 100 # max storage
+
     for offset in range(24):
         bounds[offset + x_index["SE"]] = (MinC, MaxC)
 
     # Bound RE
-    RQ = [w for w in range(24)]  # stockage.RQ
     for offset in range(24):
         bounds[offset + x_index["RE"]] = (None, RQ[offset])
 
     # Bound Tau
-    beta = 1 # appliance.beta
     bounds[-1] = (None, beta)
 
-    print('Matrice l ?', l)
-    print('Matrice bounds ?', bounds)
-
-
     # linprog
-    res = linprog(c, A_eq=l.tolist(), b_eq=b.tolist(), A_ub=lin.tolist(), b_ub=bin.tolist(), bounds=bounds, options={"disp": True})
+    res = linprog(c, A_eq=l, b_eq=b, A_ub=lin, b_ub=bin, bounds=bounds, options={"disp": True})
     print(res)
-    return ctot
+
+    return res
 
 # Module 2
 def module2():
